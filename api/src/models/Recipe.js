@@ -8,5 +8,29 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+
+    id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4
+    },
+
+    dishSumary: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    punctuation: {
+      type: DataTypes.INTEGER,
+    },
+
+    healthyLevel: {
+      type: DataTypes.STRING,
+    },
+
+    steps: {
+      type: DataTypes.STRING,
+    }
   });
 };
