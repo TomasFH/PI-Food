@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
     },
 
     dishSumary: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, //o .TEXT?
       allowNull: false,
     },
 
@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
     },
 
     steps: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, //o .TEXT?
     }
   });
 };
