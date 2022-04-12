@@ -10,7 +10,9 @@ const router = Router();
 router.get('/', async (req, res, next) => {
     // res.send("soy /get recipe")
     try {
-       const newRecipe = await Recipe.findAll()
+       const newRecipe = await Recipe.findAll({
+           include: Diet
+       })
        res.send(newRecipe);
     }catch(error){
         next(error);

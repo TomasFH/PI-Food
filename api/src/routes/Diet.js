@@ -23,8 +23,8 @@ router.post('/', async (req, res, next) => {
             name
         });
         res.send(newDiet);
-    }catch (err){
-        res.send(err)
+    }catch (error){
+        next(error)
     }
 })
 
