@@ -5,6 +5,7 @@ const { Recipe } = require('../db.js');
 const { Diet } = require('../db.js')
 const axios = require('axios');
 const { Op } = require('sequelize');
+const db = require('../db.js');
 
 // Importar todos los routers;
 // Ejemplo: const authRouter = require('./auth.js');
@@ -75,30 +76,45 @@ router.get('/:recipeId', async (req, res, next) => {
 
     try{
         const { recipeId } = req.params;
-        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}`);
-        const dbRecipePromise = await Recipe.findAll({
+
+        if( recipeId.length < 8){
+            //el tamaño de las ID's de la API suelen ser de 6 números. Si supera esa longitud, no pregunta nada a la API.
+            const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${API_KEY}`);
+            apiRecipePromise.then((response) => {
+                const apiRecipe = response;
+                const filteredApiRecipe = {
+                    id: apiRecipe.data.id, //aunque ya deberíamos saer su valor porque es el que se necesita saber para hacer el GET...
+                    name: apiRecipe.data.title,
+                    summary: apiRecipe.data.summary,
+                    healthScore: apiRecipe.data.healthScore,
+                    punctuation: apiRecipe.data.spoonacularScore,
+                    steps: apiRecipe.data.analyzedInstructions[0].steps
+                };
+
+                res.send( filteredApiRecipe );
+            })
+        } else {
+            //si es mayor de 8 (por poner un número de longitud mayor que los de la API y menos que los de la DB) busca en la base de datos
+            const dbRecipePromise = await Recipe.findAll({
             include: Diet,
-            // where: {
-            //     id: {
-            //         [Op.eq]: recipeId             // me tira un error mas largo que la biblia
-            //     }
-            // }
+            where: {
+                id: recipeId
+            }
         });
-        
-        Promise.all([ apiRecipePromise, dbRecipePromise ])
-        .then((response) => {
-            const [ apiRecipe, dbRecipe ] = response;
-            const filteredApiRecipe = apiRecipe.data.results.filter((e) => e.id == recipeId);
-            const filteredDbRecipe = dbRecipe.filter((g) => g.dataValues.id == recipeId);
-
-            res.send(...filteredApiRecipe, ...filteredDbRecipe);
-        })} catch (error) {
-            next(error)
+        const aux = dbRecipePromise[0].dataValues; //al filtar por ID, debería tener un único valor en mi arreglo, por eso busco el elemento de la posición 0.
+        const filteredDbRecipe = {
+            id: aux.id,
+            name: aux.name,
+            summary: aux.dishSumary, //error ortografico: summary va con doble m.
+            healthScore: aux.healthyLevel,
+            punctuation: aux.punctuation,
+            steps: aux.steps
         };
-
-        //No es necesario verificar que se me pase 'algo' por params de la URL ya que en tal caso significa que 
-        //la URL quedo en ".../recipe/" y eso haría que se ejecute el GET '/' de arriba.
-
+        res.send( filteredDbRecipe );
+        };
+    } catch(error) {
+        next(error);
+    };
 });
 
 router.post('/', async (req, res, next) => {
