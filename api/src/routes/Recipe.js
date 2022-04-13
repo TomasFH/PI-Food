@@ -17,7 +17,7 @@ router.get('/', async (req, res, next) => {
 
     const {name} = req.query;
 
-    console.log('Soy el query: ', name)
+    // console.log('Soy el query: ', name)
 
     if(name){
         const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}`);
@@ -79,24 +79,35 @@ router.get('/', async (req, res, next) => {
 
 });
 
-// router.get('/', async (req, res, next) => {
-//     // res.send("soy /get recipe")
+router.get('/:recipeId', async (req, res, next) => {
 
-//     const {prueba} = req.query;
-//     console.log(prueba);
+    try{
+        const { recipeId } = req.params;
+        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}`);
+        const dbRecipePromise = await Recipe.findAll({
+            include: Diet,
+            // where: {
+            //     id: {
+            //         [Op.eq]: recipeId             // me tira un error mas largo que la biblia
+            //     }
+            // }
+        });
+        
+        Promise.all([ apiRecipePromise, dbRecipePromise ])
+        .then((response) => {
+            const [ apiRecipe, dbRecipe ] = response;
+            const filteredApiRecipe = apiRecipe.data.results.filter((e) => e.id == recipeId);
+            const filteredDbRecipe = dbRecipe.filter((g) => g.dataValues.id == recipeId);
 
-//     try {
-    //    const newRecipe = await Recipe.findAll({
-    //        include: Diet
-    //    })
-//        res.send(newRecipe);
-//     }catch(error){
-//         next(error);
-//     };
-// });
+            res.send(...filteredApiRecipe, ...filteredDbRecipe);
+        })} catch (error) {
+            next(error)
+        };
+        
+        //No es necesario verificar que se me pase 'algo' por params de la URL ya que en tal caso significa que 
+        //la URL quedo en ".../recipe/" y eso haría que se ejecute el GET '/' de arriba.
 
-// GET /recipes?name="..."
-
+});
 
 router.post('/', async (req, res, next) => {
     // res.send("soy /post recipe")
