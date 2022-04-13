@@ -9,15 +9,11 @@ const { Op } = require('sequelize');
 // Importar todos los routers;
 // Ejemplo: const authRouter = require('./auth.js');
 
-// console.log(API_KEY);
-
 const router = Router();
 
 router.get('/', async (req, res, next) => {
 
     const {name} = req.query;
-
-    // console.log('Soy el query: ', name)
 
     if(name){
         const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}`);
@@ -29,21 +25,17 @@ router.get('/', async (req, res, next) => {
         .then((response) => {
             const [apiRecipe, dbRecipe] = response;
             const filteredApiRecipe = apiRecipe.data.results.filter(e => e.title.toLowerCase().includes(name.toLowerCase())); //filtra de la api lo que me pasen por Query
-
-            // console.log(dbRecipe)
-
-            // const aux = dbRecipe.map((e) => console.log('MAP', e.dataValues.name));
-
             const aux2 = dbRecipe.filter((e) => e.dataValues.name.toLowerCase().includes(name.toLowerCase()));
-            
-            // aux2.map(asd => console.log(asd.dataValues))
-
             const filteredDbRecipe = aux2.map((f) => f.dataValues)
-
-            // console.log('SOY AUX', aux);
     
-            const allRecipes = [...filteredApiRecipe, filteredDbRecipe];
-            res.send(allRecipes);
+            if(!(filteredApiRecipe.length > 0) && !(filteredDbRecipe.length > 0)){
+                //si lo que se me pasó por Query no se encuentra ni en la API ni en la DB
+                res.status(404).send({error: 'No se ha encontrado ninguna receta que contenga el nombre proporcionado'})
+            } else {
+                //si sí lo encuentra
+                const allRecipes = [...filteredApiRecipe, filteredDbRecipe];
+                res.send(allRecipes);
+            }
         })
         .catch(error => error);
 
@@ -103,7 +95,7 @@ router.get('/:recipeId', async (req, res, next) => {
         })} catch (error) {
             next(error)
         };
-        
+
         //No es necesario verificar que se me pase 'algo' por params de la URL ya que en tal caso significa que 
         //la URL quedo en ".../recipe/" y eso haría que se ejecute el GET '/' de arriba.
 
@@ -127,18 +119,15 @@ router.post('/', async (req, res, next) => {
         });
         res.send(newRecipe);
     } catch (error) {
-        // console.log('Soy el error: ', error)
         next(error); //devuelve un mensaje, pero no el mensaje (o la forma) que querría
     };
 });
 
 router.post(`/:recipeId/link-to-diet/:dietId`, async (req, res, next) => {
     const {recipeId, dietId} = req.params;
-    console.log(recipeId, ' y ', dietId);
 
     try{
     const recipe = await Recipe.findByPk(recipeId);
-    console.log(recipe)
     await recipe.addDiet(dietId);
     res.status(201).send('Se ha vinculado la receta a la dieta indicada.');
     } catch(err){
