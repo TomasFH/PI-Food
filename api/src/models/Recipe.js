@@ -7,6 +7,7 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true
     },
 
     id: {
@@ -16,7 +17,7 @@ module.exports = (sequelize) => {
       defaultValue: DataTypes.UUIDV4
     },
 
-    dishSumary: {
+    summary: {
       type: DataTypes.STRING, //o .TEXT?
       allowNull: false,
     },
@@ -25,12 +26,12 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
     },
 
-    healthyLevel: {
-      type: DataTypes.STRING,
+    healthScore: {
+      type: DataTypes.INTEGER,
     },
 
     steps: {
-      type: DataTypes.STRING, //o .TEXT?
+      type: DataTypes.TEXT, // estaba en .STRING. Lo cambié para probar.
     }
   });
 };

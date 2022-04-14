@@ -19,10 +19,48 @@
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
+const { Diet } = require('./src/db.js');
 
 // Syncing all the models at once.
 conn.sync({ force: false }).then(() => {
-  server.listen(3001, () => {
+  
+  // --------------------------------------------------------------
+  // Lista de Dietas que se precargarán al iniciar la App
+  const dietTypes = [
+    "gluten free",
+    "ketogenic",
+    "vegetarian",
+    "lacto-vegetarian",
+    "ovo-vegetarian",
+    "vegan",
+    "pescetarian",
+    "paleo",
+    "primal",
+    "low fodmap",
+    "whole30"
+  ];
+
+  async function defaultDietTypes (dietName) {
+    try{  
+      await Diet.create({
+      name: dietName
+    })
+  } catch {
+    // console.log('Ya se ha creado una tabla con ese valor.')
+    // sin el try-catch tira error avisando que ya existen dichos valores dentro de la tabla si el {force: true}
+  }
+    // console.log('Se creó una tabla con ', dietName)
+  };
+
+  dietTypes.map((e) => {
+    // console.log(e);
+    defaultDietTypes(e);
+  })
+  
+
+  // --------------------------------------------------------------
+
+    server.listen(3001, () => {
     console.log('%s listening at 3001'); // eslint-disable-line no-console
   });
 });

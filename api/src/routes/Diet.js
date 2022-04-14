@@ -17,10 +17,11 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     const {name} = req.body;
+    const nameLC = name.toLowerCase() // LC = Lower Case
 
     try{
         const newDiet = await Diet.create({
-            name
+            name: nameLC
         });
         res.send(newDiet);
     }catch (error){
