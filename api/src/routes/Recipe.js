@@ -17,7 +17,7 @@ router.get('/', async (req, res, next) => {
     const {name} = req.query;
 
     if(name){
-        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}`);
+        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true`);
         const dbRecipePromise = await Recipe.findAll({
             include: Diet
         });
@@ -25,9 +25,17 @@ router.get('/', async (req, res, next) => {
         Promise.all([apiRecipePromise, dbRecipePromise])
         .then((response) => {
             const [apiRecipe, dbRecipe] = response;
-            const filteredApiRecipe = apiRecipe.data.results.filter(e => e.title.toLowerCase().includes(name.toLowerCase())); //filtra de la api lo que me pasen por Query
+            const aux1 = apiRecipe.data.results.filter(e => e.title.toLowerCase().includes(name.toLowerCase())); //filtra de la api lo que me pasen por Query
             const aux2 = dbRecipe.filter((e) => e.dataValues.name.toLowerCase().includes(name.toLowerCase()));
             const filteredDbRecipe = aux2.map((f) => f.dataValues)
+            const filteredApiRecipe = aux1.map((recipe) => {
+                return {
+                    name: recipe.title,
+                    id: recipe.id,
+                    image: recipe.image,
+                    diets: recipe.diets
+                }
+            })
     
             if(!(filteredApiRecipe.length > 0) && !(filteredDbRecipe.length > 0)){
                 //si lo que se me pasó por Query no se encuentra ni en la API ni en la DB
@@ -48,7 +56,7 @@ router.get('/', async (req, res, next) => {
         */
 
     } else {
-        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}`); // agregar "&number=x" (siendo 'x' la cantidad de recetas que pido a la API)
+        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true`); // agregar "&number=x" (siendo 'x' la cantidad de recetas que pido a la API)
         const dbRecipePromise = await Recipe.findAll({
             include: Diet
         });
@@ -60,9 +68,11 @@ router.get('/', async (req, res, next) => {
                 return {
                     name: recipe.title,
                     id: recipe.id,
-                    image: recipe.image
+                    image: recipe.image,
+                    diets: recipe.diets
                 }
             })
+            // console.log(filteredApiRecipe);
     
             const allRecipes = [...filteredApiRecipe, ...dbRecipe];
             res.send(allRecipes);
@@ -128,7 +138,7 @@ router.get('/:recipeId', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-    const {name, summary, punctuation, healthScore, steps} = req.body;
+    const {name, summary, punctuation, healthScore, steps, image} = req.body;
     const nameLC = name.toLowerCase(); //LC = Lower Case
 
     // if(!name || !dishSumary){
@@ -141,7 +151,8 @@ router.post('/', async (req, res, next) => {
             summary, 
             punctuation, 
             healthScore, 
-            steps
+            steps,
+            image
         });
         res.send(newRecipe);
     } catch (error) {

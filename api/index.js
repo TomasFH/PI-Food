@@ -22,7 +22,7 @@ const { conn } = require('./src/db.js');
 const { Diet } = require('./src/db.js');
 
 // Syncing all the models at once.
-conn.sync({ force: true }).then(() => {
+conn.sync({ force: false }).then(() => {
   
   // --------------------------------------------------------------
   // Lista de Dietas que se precargarán al iniciar la App
