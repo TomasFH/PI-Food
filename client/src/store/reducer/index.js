@@ -1,4 +1,4 @@
-import { AUMENTAR_CONTADOR, SEARCH_ALL_RECIPES, SEARCH_RECIPES } from "../actions";
+import { AUMENTAR_CONTADOR, SEARCH_ALL_RECIPES, SEARCH_RECIPES, SEARCH_RECIPES_ERROR } from "../actions";
 
 const initialState = {
     recipes: [],
@@ -22,6 +22,12 @@ export function reducer(state = initialState, action) {
             }
 
         case SEARCH_ALL_RECIPES:
+            return {
+                ...state,
+                recipes: action.payload
+            }
+
+        case SEARCH_RECIPES_ERROR:
             return {
                 ...state,
                 recipes: action.payload

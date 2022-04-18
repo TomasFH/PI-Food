@@ -39,7 +39,7 @@ router.get('/', async (req, res, next) => {
     
             if(!(filteredApiRecipe.length > 0) && !(filteredDbRecipe.length > 0)){
                 //si lo que se me pasó por Query no se encuentra ni en la API ni en la DB
-                res.status(404).send({error: 'No se ha encontrado ninguna receta que contenga el nombre proporcionado'})
+                res.status(404).send({error: 'No se ha encontrado ninguna receta que contenga el nombre proporcionado.'})
             } else {
                 //si sí lo encuentra
                 const allRecipes = [...filteredApiRecipe, ...filteredDbRecipe];

@@ -3,6 +3,7 @@ import axios from 'axios';
 export const AUMENTAR_CONTADOR = 'AUMENTAR_CONTADOR';
 export const SEARCH_RECIPES = 'SEARCH_RECIPES';
 export const SEARCH_ALL_RECIPES = 'SEARCH_ALL_RECIPES';
+export const SEARCH_RECIPES_ERROR = 'SEARCH_RECIPES_ERROR';
 
 export function aumentarContador(){
     return {
@@ -17,6 +18,12 @@ export function searchRecipes(recipe){
             dispatch({
                 type: SEARCH_RECIPES,
                 payload: r.data
+            })
+        })
+        .catch(error => {
+            dispatch({
+                type: SEARCH_RECIPES_ERROR,
+                payload: [error.response.data]
             })
         })
     }
