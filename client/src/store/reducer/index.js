@@ -1,9 +1,10 @@
 import { ASCENDANT, AtoZ, DESCENDANT, ZtoA } from "../../Aux-Const/aux-const";
-import { AUMENTAR_CONTADOR, ORDER, SEARCH_ALL_RECIPES, SEARCH_RECIPES, SEARCH_RECIPES_ERROR } from "../actions";
+import { AUMENTAR_CONTADOR, ORDER, SEARCH_ALL_DIETS, SEARCH_ALL_RECIPES, SEARCH_RECIPES, SEARCH_RECIPES_ERROR } from "../actions";
 
 const initialState = {
     recipes: [],
-    counter: 0  
+    diets: [],
+    counter: 0 
 }
 
 export function reducer(state = initialState, action) {
@@ -116,6 +117,12 @@ export function reducer(state = initialState, action) {
                 ...state,
                 recipes: aux
             }
+
+        case SEARCH_ALL_DIETS:
+            return {
+                ...state,
+                diets: action.payload // le puse name, pero sería el nombre de la dieta :)
+            };
             
         default:
             return state;

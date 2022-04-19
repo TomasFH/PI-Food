@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { searchAllRecipes, searchRecipes } from '../../store/actions';
+import { DietSelector } from '../DietSelector/DietSelector';
 import { OrderSelector } from '../OrderSelector/OrderSelector';
 
 export function Input() {
@@ -28,6 +29,7 @@ export function Input() {
             <OrderSelector />
             <button onClick={handleOnClick}>Buscar</button>
             <button onClick={() => dispatch(searchAllRecipes())}>Trae todo vieja</button>
+            <DietSelector />
         </div>
     </div>
 }

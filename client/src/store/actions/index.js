@@ -5,6 +5,7 @@ export const SEARCH_RECIPES = 'SEARCH_RECIPES';
 export const SEARCH_ALL_RECIPES = 'SEARCH_ALL_RECIPES';
 export const SEARCH_RECIPES_ERROR = 'SEARCH_RECIPES_ERROR';
 export const ORDER = 'ORDER';
+export const SEARCH_ALL_DIETS = 'SEARCH_ALL_DIETS';
 
 export function aumentarContador(){
     return {
@@ -46,5 +47,17 @@ export function orderBy(order){
     return {
         type: ORDER,
         payload: order
+    }
+}
+
+export function searchAllDiets(){
+    return function(dispatch){
+        axios.get(`http://localhost:3001/api/recipe/types`)
+        .then(r => {
+            dispatch({
+                type:SEARCH_ALL_DIETS,
+                payload: r.data
+            })
+        })
     }
 }
