@@ -1,10 +1,16 @@
 // import { useSelector} from 'react-redux'
+import { useEffect } from 'react';
 import { connect } from 'react-redux'
-import { aumentarContador, searchRecipes } from '../../store/actions';
+import { aumentarContador, searchAllRecipes, searchRecipes } from '../../store/actions';
 
-export function Recipes({recipe, aumentar, searchRecipe}) {
+export function Recipes({recipe, aumentar, searchRecipe, searchAllRecipes}) {
     // let recipe = useSelector((state) => state.recipes)
     console.log(recipe);
+
+    // useEffect(() => {
+    //     searchAllRecipes()           // Habilitar estas líneas de código para que al 
+    // }, [])                           // montarse el componente se muestren todas las recetas automáticamente.
+
     return <div>
         <div>
             Recetas:
@@ -39,7 +45,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     aumentar: () => dispatch(aumentarContador()),
-    searchRecipe: (recipe) => dispatch(searchRecipes(recipe))
+    searchRecipe: (recipe) => dispatch(searchRecipes(recipe)),
+    searchAllRecipes: () => dispatch(searchAllRecipes())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Recipes);

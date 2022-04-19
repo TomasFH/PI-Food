@@ -4,6 +4,7 @@ export const AUMENTAR_CONTADOR = 'AUMENTAR_CONTADOR';
 export const SEARCH_RECIPES = 'SEARCH_RECIPES';
 export const SEARCH_ALL_RECIPES = 'SEARCH_ALL_RECIPES';
 export const SEARCH_RECIPES_ERROR = 'SEARCH_RECIPES_ERROR';
+export const ORDER = 'ORDER';
 
 export function aumentarContador(){
     return {
@@ -38,5 +39,12 @@ export function searchAllRecipes(){
                 payload: r.data
             })
         })
+    }
+}
+
+export function orderBy(order){
+    return {
+        type: ORDER,
+        payload: order
     }
 }

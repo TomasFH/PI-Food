@@ -64,12 +64,14 @@ router.get('/', async (req, res, next) => {
         Promise.all([apiRecipePromise, dbRecipePromise])
         .then((response) => {
             const [apiRecipe, dbRecipe] = response;
+            console.log(apiRecipe.data.results)
             const filteredApiRecipe = apiRecipe.data.results.map((recipe) => {
                 return {
                     name: recipe.title,
                     id: recipe.id,
                     image: recipe.image,
-                    diets: recipe.diets
+                    diets: recipe.diets,
+                    punctuation: recipe.spoonacularScore
                 }
             })
             // console.log(filteredApiRecipe);
