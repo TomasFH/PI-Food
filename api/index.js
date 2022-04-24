@@ -29,15 +29,16 @@ conn.sync({ force: false }).then(() => {
   const dietTypes = [
     "gluten free",
     "ketogenic",
-    "vegetarian",
-    "lacto-vegetarian",
-    "ovo-vegetarian",
+    "vegetarian",  // en la api lo único que hay es lacto ovo vegetarian
+    "lacto ovo vegetarian", // :D
+    "lacto vegetarian", // en la api lo único que hay es lacto ovo vegetarian
+    "ovo vegetarian", //  en la api lo único que hay es lacto ovo vegetarian
     "vegan",
-    "pescetarian",
-    "paleo",
+    "pescatarian",
+    "paleolithic",
     "primal",
     "low fodmap",
-    "whole30"
+    "whole 30",
   ];
 
   async function defaultDietTypes (dietName) {

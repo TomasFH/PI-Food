@@ -17,7 +17,7 @@ router.get('/', async (req, res, next) => {
     const {name} = req.query;
 
     if(name){
-        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true`);
+        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true`); // agregar "&number=x" (siendo 'x' la cantidad de recetas que pido a la API)
         const dbRecipePromise = await Recipe.findAll({
             include: Diet
         });
@@ -33,7 +33,8 @@ router.get('/', async (req, res, next) => {
                     name: recipe.title,
                     id: recipe.id,
                     image: recipe.image,
-                    diets: recipe.diets
+                    diets: recipe.diets,
+                    punctuation: recipe.spoonacularScore
                 }
             })
     
@@ -56,7 +57,7 @@ router.get('/', async (req, res, next) => {
         */
 
     } else {
-        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true`); // agregar "&number=x" (siendo 'x' la cantidad de recetas que pido a la API)
+        const apiRecipePromise = axios.get(`https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true&number=3`); // agregar "&number=x" (siendo 'x' la cantidad de recetas que pido a la API)
         const dbRecipePromise = await Recipe.findAll({
             include: Diet
         });
@@ -107,8 +108,10 @@ router.get('/:recipeId', async (req, res, next) => {
                     summary: apiRecipe.data.summary,
                     healthScore: apiRecipe.data.healthScore,
                     punctuation: apiRecipe.data.spoonacularScore,
-                    steps: apiRecipe.data.analyzedInstructions[0].steps,
-                    diets: apiRecipe.data.diets
+                    steps: apiRecipe.data.analyzedInstructions[0]? apiRecipe.data.analyzedInstructions[0].steps : 'No data available on API', // algunas recetas no traen 'analyzedInstructions'
+                    diets: apiRecipe.data.diets,
+                    dishTypes: apiRecipe.data.dishTypes,
+                    image: apiRecipe.data.image
                 };
 
                 res.send( filteredApiRecipe );
